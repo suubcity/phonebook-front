@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import personService from "./services/persons";
 
 const Search = ({ handleChange, value }) => {
   return (
@@ -54,8 +55,7 @@ const App = () => {
 
   //Functions
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((res) => {
-      console.log("get succesful");
+    personService.getAll().then((res) => {
       setPersons(res.data);
     });
   }, []);
@@ -81,7 +81,9 @@ const App = () => {
       number: newNumber,
     };
 
-    setPersons(persons.concat(newEntry));
+    personService.create(newEntry).then((res) => {
+      setPersons(persons.concat(res.data));
+    });
   };
 
   const handleAddClick = (e) => {
@@ -92,6 +94,7 @@ const App = () => {
       addPersonToPhoneBook();
     }
     setNewName("");
+    setNewNumber("");
   };
 
   const filterByName = () => {
