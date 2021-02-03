@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const Search = ({ handleChange, value }) => {
   return (
@@ -46,17 +47,19 @@ const Numbers = () => {
 
 const App = () => {
   //States
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-123456" },
-    { name: "Ada Lovelace", number: "39-44-5323523" },
-    { name: "Dan Abramov", number: "12-43-234345" },
-    { name: "Mary Poppendieck", number: "39-23-6423122" },
-  ]);
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
   //Functions
+  useEffect(() => {
+    axios.get("http://localhost:3001/persons").then((res) => {
+      console.log("get succesful");
+      setPersons(res.data);
+    });
+  }, []);
+
   const handleNameChange = (e) => {
     setNewName(e.target.value);
   };
@@ -101,7 +104,7 @@ const App = () => {
 
   const renderPersons = (arrayOfPersons) => {
     return arrayOfPersons.map((person) => {
-      return <Entry person={person} />;
+      return <Entry key={person.name} person={person} />;
     });
   };
 
