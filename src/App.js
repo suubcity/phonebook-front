@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import personService from "./services/persons";
 
 const Search = ({ handleChange, value }) => {
@@ -34,10 +33,17 @@ const Form = ({
   );
 };
 
-const Entry = ({ person }) => {
+const Entry = ({ person, handleRemovePerson }) => {
   return (
     <div>
-      {person.name} {person.number}
+      {person.name} {person.number}{" "}
+      <button
+        data-id={person.id}
+        data-name={person.name}
+        onClick={handleRemovePerson}
+      >
+        delete
+      </button>
     </div>
   );
 };
@@ -59,6 +65,22 @@ const App = () => {
       setPersons(res.data);
     });
   }, []);
+
+  const handleRemovePerson = (e) => {
+    if (confirmRemoveOfPerson(e.target.dataset.name)) {
+      personService.remove(e.target.dataset.id).then((res) => {
+        setPersons(
+          persons.filter((person) => {
+            return person.id !== +e.target.dataset.id;
+          })
+        );
+      });
+    }
+  };
+
+  const confirmRemoveOfPerson = (name) => {
+    return window.confirm(`Delete ${name}`);
+  };
 
   const handleNameChange = (e) => {
     setNewName(e.target.value);
@@ -107,7 +129,13 @@ const App = () => {
 
   const renderPersons = (arrayOfPersons) => {
     return arrayOfPersons.map((person) => {
-      return <Entry key={person.name} person={person} />;
+      return (
+        <Entry
+          key={person.name}
+          person={person}
+          handleRemovePerson={handleRemovePerson}
+        />
+      );
     });
   };
 
