@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import personService from "./services/persons";
+import "./App.css";
 
+//Components
 const Search = ({ handleChange, value }) => {
   return (
     <div>
@@ -48,17 +50,26 @@ const Entry = ({ person, handleRemovePerson }) => {
   );
 };
 
+const Notification = ({ message }) => {
+  if (message === "") {
+    return null;
+  } else {
+    return <div className="notification">{message}</div>;
+  }
+};
+
 const Numbers = () => {
   return <h2>Numbers</h2>;
 };
 
+//App
 const App = () => {
   //States
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [notification, setNotification] = useState("");
   //Functions
   useEffect(() => {
     personService.getAll().then((res) => {
@@ -94,7 +105,9 @@ const App = () => {
     setSearchQuery(e.target.value);
   };
   const nameIsAlreadyInPhonebook = () => {
-    return persons.find((person) => person.name === newName);
+    return persons.find(
+      (person) => person.name.toLowerCase() === newName.toLowerCase()
+    );
   };
 
   const addPersonToPhonebook = () => {
@@ -116,7 +129,7 @@ const App = () => {
     const newEntry = createPersonFromState();
 
     const foundPerson = persons.find((person) => {
-      return person.name === newName;
+      return person.name.toLowerCase() === newName.toLowerCase();
     });
 
     const id = foundPerson.id;
@@ -139,9 +152,11 @@ const App = () => {
         )
       ) {
         updatePersonInPhonebook();
+        displayNotification(`Number for ${newName} updated to ${newNumber}`);
       }
     } else {
       addPersonToPhonebook();
+      displayNotification(`${newName} added to phonebook`);
     }
     setNewName("");
     setNewNumber("");
@@ -171,9 +186,15 @@ const App = () => {
     return renderPersons(filterByName());
   };
 
+  const displayNotification = (message) => {
+    setNotification(message);
+    setTimeout(() => setNotification(""), 2000);
+  };
+
   //JSX
   return (
     <div>
+      <Notification message={notification} />
       <h2>Phonebook</h2>
       <Search handleChange={handleFilterChange} value={searchQuery} />
       <Form
