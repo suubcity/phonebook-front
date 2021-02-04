@@ -58,6 +58,14 @@ const Notification = ({ message }) => {
   }
 };
 
+const Error = ({ message }) => {
+  if (message === "") {
+    return null;
+  } else {
+    return <div className="error">{message}</div>;
+  }
+};
+
 const Numbers = () => {
   return <h2>Numbers</h2>;
 };
@@ -70,6 +78,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [notification, setNotification] = useState("");
+  const [error, setError] = useState("");
+
   //Functions
   useEffect(() => {
     personService.getAll().then((res) => {
@@ -115,6 +125,7 @@ const App = () => {
 
     personService.create(newEntry).then((res) => {
       setPersons(persons.concat(res.data));
+      displayNotification(`${newName} added to phonebook`);
     });
   };
 
@@ -134,13 +145,24 @@ const App = () => {
 
     const id = foundPerson.id;
 
-    personService.update(id, newEntry).then((res) => {
-      setPersons(
-        persons.map((person) => {
-          return person.id !== id ? person : res.data;
-        })
-      );
-    });
+    personService
+      .update(id, newEntry)
+      .then((res) => {
+        setPersons(
+          persons.map((person) => {
+            return person.id !== id ? person : res.data;
+          })
+        );
+        displayNotification(`Number for ${newName} updated to ${newNumber}`);
+      })
+      .catch(() => {
+        displayError(`${newName} already removed from phonebook`);
+        setPersons(
+          persons.filter((person) => {
+            return person.id !== id;
+          })
+        );
+      });
   };
 
   const handleAddClick = (e) => {
@@ -152,11 +174,9 @@ const App = () => {
         )
       ) {
         updatePersonInPhonebook();
-        displayNotification(`Number for ${newName} updated to ${newNumber}`);
       }
     } else {
       addPersonToPhonebook();
-      displayNotification(`${newName} added to phonebook`);
     }
     setNewName("");
     setNewNumber("");
@@ -188,13 +208,19 @@ const App = () => {
 
   const displayNotification = (message) => {
     setNotification(message);
-    setTimeout(() => setNotification(""), 2000);
+    setTimeout(() => setNotification(""), 5000);
+  };
+
+  const displayError = (message) => {
+    setError(message);
+    setTimeout(() => setError(""), 5000);
   };
 
   //JSX
   return (
     <div>
       <Notification message={notification} />
+      <Error message={error} />
       <h2>Phonebook</h2>
       <Search handleChange={handleFilterChange} value={searchQuery} />
       <Form

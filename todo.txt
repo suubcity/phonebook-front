@@ -1,9 +1,5 @@
+create an error component
+style it
+ create a display error function
 
-give it a classname of notification
-style the component
-import the css into app.js
-
-create state for notification
-set conditional rendering for it to display if state has a value.
-
-create a function to display notification which takes text argument and the resets the state back to empty
+ do a .catch on the put function which displays an error message
