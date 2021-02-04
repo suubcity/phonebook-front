@@ -97,23 +97,51 @@ const App = () => {
     return persons.find((person) => person.name === newName);
   };
 
-  const addPersonToPhoneBook = () => {
-    const newEntry = {
-      name: newName,
-      number: newNumber,
-    };
+  const addPersonToPhonebook = () => {
+    const newEntry = createPersonFromState();
 
     personService.create(newEntry).then((res) => {
       setPersons(persons.concat(res.data));
     });
   };
 
+  const createPersonFromState = () => {
+    return {
+      name: newName,
+      number: newNumber,
+    };
+  };
+
+  const updatePersonInPhonebook = () => {
+    const newEntry = createPersonFromState();
+
+    const foundPerson = persons.find((person) => {
+      return person.name === newName;
+    });
+
+    const id = foundPerson.id;
+
+    personService.update(id, newEntry).then((res) => {
+      setPersons(
+        persons.map((person) => {
+          return person.id !== id ? person : res.data;
+        })
+      );
+    });
+  };
+
   const handleAddClick = (e) => {
     e.preventDefault();
     if (nameIsAlreadyInPhonebook()) {
-      alert(`${newName} is already in phonebook.`);
+      if (
+        window.confirm(
+          `${newName} is already in phonebook. Replace old number with new one?`
+        )
+      ) {
+        updatePersonInPhonebook();
+      }
     } else {
-      addPersonToPhoneBook();
+      addPersonToPhonebook();
     }
     setNewName("");
     setNewNumber("");
