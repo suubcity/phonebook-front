@@ -1,5 +1,8 @@
-create an error component
-style it
- create a display error function
+Deploy to heroku
 
- do a .catch on the put function which displays an error message
+sign into heroku
+create an app
+take it from the git hub repo
+create script for running build
+
+npm build:ui;
