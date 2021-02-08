@@ -5,14 +5,16 @@ const getAll = () => {
 	return axios.get(baseUrl);
 };
 
+const getOne = (id) => {
+	return axios.get(`${baseUrl}${id}`);
+};
+
 const create = (newPerson) => {
 	return axios.post(baseUrl, newPerson);
 };
 
 const remove = (id) => {
-	const url = baseUrl + id;
-	console.log(url);
-	return axios.delete(url);
+	return axios.delete(`${baseUrl}${id}`);
 };
 
 const update = (id, newObject) => {
