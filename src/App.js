@@ -82,9 +82,10 @@ const App = () => {
 			personService.remove(e.target.dataset.id).then((res) => {
 				setPersons(
 					persons.filter((person) => {
-						return person.id !== +e.target.dataset.id;
+						return person.id !== e.target.dataset.id;
 					})
 				);
+				displayNotification(`${e.target.dataset.name} has been removed from phonebook.`);
 			});
 		}
 	};
@@ -127,6 +128,7 @@ const App = () => {
 	const updatePersonInPhonebook = () => {
 		const newEntry = createPersonFromState();
 
+		//todo make this code a sperate function
 		const foundPerson = persons.find((person) => {
 			return person.name.toLowerCase() === newName.toLowerCase();
 		});
