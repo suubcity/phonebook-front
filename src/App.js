@@ -145,13 +145,36 @@ const App = () => {
 				);
 				displayNotification(`Number for ${newName} updated to ${newNumber}`);
 			})
-			.catch(() => {
-				displayError(`${newName} already removed from phonebook`);
-				setPersons(
-					persons.filter((person) => {
-						return person.id !== id;
-					})
+			.catch((error) => {
+				//logging error.response.data
+				console.log(
+					'######',
+					'VARIABLE NAME:',
+					'error.response.data',
+					'TYPEOF:',
+					typeof error.response.data,
+					'VALUE:',
+					error.response.data,
+					'######'
 				);
+				//end of logging
+
+				//logging error.message
+				console.log(
+					'######',
+					'VARIABLE NAME:',
+					'error.message',
+					'TYPEOF:',
+					typeof error.message,
+					'VALUE:',
+					error.message,
+					'######'
+				);
+				//end of logging
+
+				console.log(error.message);
+
+				displayError(JSON.stringify(error.response.data));
 			});
 	};
 
@@ -191,7 +214,7 @@ const App = () => {
 
 	const displayError = (message) => {
 		setError(message);
-		setTimeout(() => setError(''), 5000);
+		setTimeout(() => setError(''), 15000);
 	};
 
 	//JSX
